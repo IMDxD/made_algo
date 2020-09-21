@@ -17,7 +17,7 @@ struct King {
 int convert_rome_number(string rome_number) {
     int value = 0;
     int last_max_value = 0;
-    int current = 0;
+    int current;
     for (int i = rome_number.size() - 1; i >= 0; --i) {
         current = rome_arab_map[rome_number[i]];
         if (current < last_max_value) {

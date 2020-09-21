@@ -32,7 +32,6 @@ void swap(int& first, int& second) {
 
 vector<int> split(int start_index, int end_index, vector<int>& array, int x) {
     vector<int> index_info = {start_index, 0};
-    int temp;
     for (int i = start_index; i < end_index; ++i) {
         if (index_info[0] + index_info[1] >= end_index) {
             break;
