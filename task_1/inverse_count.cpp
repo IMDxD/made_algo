@@ -3,7 +3,7 @@
 
 using namespace std;
 
-vector<int> ReadInput(const int& array_size, vector<int>& data) {
+vector<int> read_input(const int& array_size, vector<int>& data) {
     int el;
     for (int i = 0; i < array_size; ++i) {
         cin >> el;
@@ -12,7 +12,7 @@ vector<int> ReadInput(const int& array_size, vector<int>& data) {
     return data;
 }
 
-void Merge(int start_index, int split_index, int end_index, const vector<int>& array, vector<int>& result, long long& inverse_count) {
+void merge(int start_index, int split_index, int end_index, const vector<int>& array, vector<int>& result, long long& inverse_count) {
     int i = start_index;
     int j = split_index;
     int step = start_index;
@@ -38,11 +38,11 @@ int main() {
     long long inverse_count = 0;
     cin >> array_size;
     vector<int> data(array_size);
-    ReadInput(array_size, data);
+    read_input(array_size, data);
     vector<int> temp = data;
     for (int i = 1; i < data.size(); i *= 2) {
         for (int j = 0; j < data.size(); j += 2 * i) {
-            Merge(j, j + i, j + 2 * i, data, temp, inverse_count);
+            merge(j, j + i, j + 2 * i, data, temp, inverse_count);
         }
         data = temp;
     }

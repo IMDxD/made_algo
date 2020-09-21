@@ -3,7 +3,7 @@
 
 using namespace std;
 
-vector<int> ReadInput(const int& array_size, vector<int>& array) {
+vector<int> read_input(const int& array_size, vector<int>& array) {
     int el;
     for (int i = 0; i < array_size; ++i) {
         cin >> el;
@@ -12,7 +12,7 @@ vector<int> ReadInput(const int& array_size, vector<int>& array) {
     return array;
 }
 
-void PrintArray(const vector<int>& array) {
+void print_array(const vector<int>& array) {
     for (int i = 0; i < array.size(); ++i) {
         cout << array[i];
         if (i < array.size() - 1) {
@@ -22,19 +22,19 @@ void PrintArray(const vector<int>& array) {
     cout << endl;
 }
 
-void Swap(int& first, int& second) {
+void swap(int& first, int& second) {
     int s;
     s = first;
     first = second;
     second = s;
 }
 
-void InsertSort(vector<int>& array) {
+void insert_sort(vector<int>& array) {
     int j;
     for (int i = 1; i < array.size(); ++i) {
         j = i;
         while (j > 0 && array[j - 1] > array[j]) {
-            Swap(array[j - 1], array[j]);
+            swap(array[j - 1], array[j]);
             --j;
         }
     }
@@ -44,8 +44,8 @@ int main() {
     int array_size;
     cin >> array_size;
     vector<int> data(array_size);
-    ReadInput(array_size, data);
-    InsertSort(data);
-    PrintArray(data);
+    read_input(array_size, data);
+    insert_sort(data);
+    print_array(data);
     return 0;
 }

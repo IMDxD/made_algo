@@ -44,7 +44,7 @@ bool lower(King left, King right) {
     }
 }
 
-vector<King> ReadInput(const int& array_size, vector<King>& data) {
+vector<King> read_input(const int& array_size, vector<King>& data) {
     string name;
     string rome_number;
     for (int i = 0; i < array_size; ++i) {
@@ -55,20 +55,20 @@ vector<King> ReadInput(const int& array_size, vector<King>& data) {
     return data;
 }
 
-void PrintArray(const vector<King>& array) {
+void print_array(const vector<King>& array) {
     for (int i = 0; i < array.size(); ++i) {
         cout << array[i].name << " " << array[i].rome_number << endl;
     }
 }
 
-void Swap(King& first, King& second) {
+void swap(King& first, King& second) {
     King s;
     s = first;
     first = second;
     second = s;
 }
 
-vector<int> Split(int start_index, int end_index, vector<King>& array, King x) {
+vector<int> split(int start_index, int end_index, vector<King>& array, King x) {
     vector<int> index_info = {start_index, 0};
     King temp;
     for (int i = start_index; i < end_index; ++i) {
@@ -76,25 +76,25 @@ vector<int> Split(int start_index, int end_index, vector<King>& array, King x) {
             break;
         }
         if (lower(array[i], x)) {
-            Swap(array[i], array[index_info[0]]);
+            swap(array[i], array[index_info[0]]);
             index_info[0]++;
             if (index_info[1] > 0) {
-                Swap(array[i], array[index_info[0] + index_info[1] - 1]);
+                swap(array[i], array[index_info[0] + index_info[1] - 1]);
             }
         } else if (equal(array[i], x)) {
-            Swap(array[i], array[index_info[0] + index_info[1]]);
+            swap(array[i], array[index_info[0] + index_info[1]]);
             index_info[1]++;
         }
     }
     return index_info;
 }
 
-void QuickSort(int start_index, int end_index, vector<King>& array) {
+void quick_sort(int start_index, int end_index, vector<King>& array) {
     if (end_index - start_index > 1) {
         King x = array[start_index + rand() % (end_index - start_index)];
-        vector<int> index_info = Split(start_index, end_index, array, x);
-        QuickSort(start_index, index_info[0], array);
-        QuickSort(index_info[0] + index_info[1], end_index, array);
+        vector<int> index_info = split(start_index, end_index, array, x);
+        quick_sort(start_index, index_info[0], array);
+        quick_sort(index_info[0] + index_info[1], end_index, array);
     }
 }
 
@@ -107,8 +107,8 @@ int main() {
     int array_size;
     cin >> array_size;
     vector<King> data(array_size);
-    ReadInput(array_size, data);
-    QuickSort(0, data.size(), data);
-    PrintArray(data);
+    read_input(array_size, data);
+    quick_sort(0, data.size(), data);
+    print_array(data);
     return 0;
 }

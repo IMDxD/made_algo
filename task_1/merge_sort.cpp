@@ -3,7 +3,7 @@
 
 using namespace std;
 
-vector<int> ReadInput(const int& array_size, vector<int>& data) {
+vector<int> read_input(const int& array_size, vector<int>& data) {
     int el;
     for (int i = 0; i < array_size; ++i) {
         cin >> el;
@@ -12,7 +12,7 @@ vector<int> ReadInput(const int& array_size, vector<int>& data) {
     return data;
 }
 
-void PrintArray(const vector<int>& array) {
+void print_array(const vector<int>& array) {
     for (int i = 0; i < array.size(); ++i) {
         cout << array[i];
         if (i < array.size() - 1) {
@@ -22,7 +22,7 @@ void PrintArray(const vector<int>& array) {
     cout << endl;
 }
 
-void Merge(int start_index, int split_index, int end_index, const vector<int>& array, vector<int>& result) {
+void merge(int start_index, int split_index, int end_index, const vector<int>& array, vector<int>& result) {
     int i = start_index;
     int j = split_index;
     int step = start_index;
@@ -46,14 +46,14 @@ int main() {
     int array_size;
     cin >> array_size;
     vector<int> data(array_size);
-    ReadInput(array_size, data);
+    read_input(array_size, data);
     vector<int> temp = data;
     for (int i = 1; i < data.size(); i *= 2) {
         for (int j = 0; j < data.size(); j += 2 * i) {
-            Merge(j, j + i, j + 2 * i, data, temp);
+            merge(j, j + i, j + 2 * i, data, temp);
         }
         data = temp;
     }
-    PrintArray(temp);
+    print_array(temp);
     return 0;
 }
