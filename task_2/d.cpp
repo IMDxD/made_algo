@@ -4,6 +4,9 @@
 
 using namespace std;
 
+const int ALPHABET_SIZE = 26;
+const char FIRST_CHAR = 'a';
+
 int main() {
     int target_length, letters_length;
     string target, letters;
@@ -11,9 +14,9 @@ int main() {
     cin >> target;
     cin >> letters;
     int index;
-    vector<int> letters_count(27);
+    vector<int> letters_count(ALPHABET_SIZE);
     for (char s : letters) {
-        index = s - 'a';
+        index = s - FIRST_CHAR;
         letters_count[index]++;
     }
     int start = 0;
@@ -28,14 +31,14 @@ int main() {
             if (end > target_length) {
                 break;
             }
-            index = target[end - 1] - 'a';
+            index = target[end - 1] - FIRST_CHAR;
             letters_count[index]--;
             if (letters_count[index] < 0) {
                 negative_count++;
             }
         }
         while (negative_count > 0) {
-            index = target[start] - 'a';
+            index = target[start] - FIRST_CHAR;
             start++;
             letters_count[index]++;
             if (letters_count[index] == 0) {

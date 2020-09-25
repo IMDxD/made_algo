@@ -4,6 +4,9 @@
 
 using namespace std;
 
+const int ALPHABET_SIZE = 26;
+const char FIRST_CHAR = 'a';
+
 vector<string> read_input(int array_size) {
     vector<string> data(array_size);
     string el;
@@ -21,10 +24,10 @@ void print_array(const vector<string>& array) {
 }
 
 vector<string> digit_sort_phase(const vector<string>& array, int phase) {
-    vector<int> count_array(27);
-    vector<int> index_array(27);
+    vector<int> count_array(ALPHABET_SIZE);
+    vector<int> index_array(ALPHABET_SIZE);
     for (string s : array) {
-        int index = s[s.size() - phase] - 'a';
+        int index = s[s.size() - phase] - FIRST_CHAR;
         count_array[index]++;
     }
     index_array[0] = 0;
@@ -33,7 +36,7 @@ vector<string> digit_sort_phase(const vector<string>& array, int phase) {
     }
     vector<string> temp(array.size());
     for (string s : array) {
-        int index = s[s.size() - phase] - 'a';
+        int index = s[s.size() - phase] - FIRST_CHAR;
         temp[index_array[index]++] = s;
     }
     return temp;

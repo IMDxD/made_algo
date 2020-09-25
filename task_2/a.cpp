@@ -1,10 +1,9 @@
 #include <iostream>
-#include <random>
 #include <vector>
 
 using namespace std;
 
-vector<int> read_input(const int& array_size, vector<int>& data) {
+vector<int> read_input(const int &array_size, vector<int> &data) {
     int el;
     for (int i = 0; i < array_size; ++i) {
         cin >> el;
@@ -13,7 +12,7 @@ vector<int> read_input(const int& array_size, vector<int>& data) {
     return data;
 }
 
-vector<int> copy_array_slice(const vector<int>& source, int start_index, int end_index) {
+vector<int> copy_array_slice(const vector<int> &source, int start_index, int end_index) {
     vector<int> temp(end_index - start_index);
     for (int i = start_index; i < end_index; ++i) {
         temp[i - start_index] = source[i];
@@ -21,14 +20,7 @@ vector<int> copy_array_slice(const vector<int>& source, int start_index, int end
     return temp;
 }
 
-void swap(int& first, int& second) {
-    int s;
-    s = first;
-    first = second;
-    second = s;
-}
-
-pair<int, int> split(int start_index, int end_index, vector<int>& array, int x) {
+pair<int, int> split(int start_index, int end_index, vector<int> &array, int x) {
     int lower_insert_index = start_index;
     int same_value_count = 0;
     for (int i = start_index; i < end_index; ++i) {
@@ -49,7 +41,7 @@ pair<int, int> split(int start_index, int end_index, vector<int>& array, int x) 
     return {lower_insert_index, same_value_count};
 }
 
-int k_number_statistic(int start_index, int end_index, int k, vector<int>& array) {
+int k_number_statistic(int start_index, int end_index, int k, vector<int> &array) {
     if (end_index - start_index == 1) {
         return array[start_index];
     } else {
@@ -58,7 +50,7 @@ int k_number_statistic(int start_index, int end_index, int k, vector<int>& array
         if (k < index_info.first) {
             return k_number_statistic(start_index, index_info.first, k, array);
         } else if (k >= index_info.first + index_info.second) {
-            k_number_statistic(index_info.first + index_info.second, end_index, k, array);
+            return k_number_statistic(index_info.first + index_info.second, end_index, k, array);
         } else {
             return array[index_info.first];
         }

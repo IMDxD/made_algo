@@ -3,6 +3,8 @@
 
 using namespace std;
 
+const int VALUE_COUNT = 101;
+
 vector<int> read_input() {
     int el;
     vector<int> data;
@@ -24,12 +26,12 @@ void print_array(const vector<int>& array) {
 
 int main() {
     vector<int> data = read_input();
-    vector<int> count_array(101);
+    vector<int> count_array(VALUE_COUNT);
     for (int el : data) {
         count_array[el]++;
     }
     int data_index = 0;
-    for (int count_index; count_index < count_array.size(); ++count_index) {
+    for (int count_index = 0; count_index < count_array.size(); ++count_index) {
         while (count_array[count_index] > 0) {
             data[data_index++] = count_index;
             count_array[count_index]--;
