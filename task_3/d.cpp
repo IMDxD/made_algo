@@ -33,10 +33,7 @@ int main() {
       right_size = middle_size;
     }
   }
-  if (right_size < HIGHER_BOUND) {
-    cout << left_size << endl;
-  } else {
-    cout << 0 << endl;
-  }
+  cout << left_size << endl;
+
   return 0;
 }
