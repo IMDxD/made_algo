@@ -3,14 +3,14 @@
 using namespace std;
 
 int main() {
-    int n, a, b;
+  int n, a, b;
 
-    cin >> n;
+  cin >> n;
 
-    for (int i = 0; i < n; ++i) {
-        cin >> a >> b;
-        cout << a + b << endl;
-    }
+  for (int i = 0; i < n; ++i) {
+    cin >> a >> b;
+    cout << a + b << endl;
+  }
 
-    return 0;
+  return 0;
 }

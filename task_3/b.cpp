@@ -5,7 +5,6 @@
 
 using namespace std;
 
-
 int lower_bound(const vector<int> &array, int value) {
   int left_index = -1;
   int right_index = array.size();
