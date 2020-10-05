@@ -19,7 +19,9 @@ class MinStack {
  public:
   Node *head_pointer;
   Node *min_node_pointer;
+
   MinStack() : head_pointer(nullptr), min_node_pointer(nullptr) {}
+
   void push(int element) {
     Node *new_node = new Node(element, head_pointer, min_node_pointer);
     head_pointer = new_node;
@@ -27,15 +29,17 @@ class MinStack {
       min_node_pointer = new_node;
     }
   }
+
   void pop() {
     Node *prev_head_pointer = head_pointer;
     head_pointer = (*prev_head_pointer).next_node_pointer;
     min_node_pointer = (*prev_head_pointer).min_pointer;
     free(prev_head_pointer);
   }
+  
   int minimum() const {
     return (*min_node_pointer).value;
-  };
+  }
 };
 
 int main() {
