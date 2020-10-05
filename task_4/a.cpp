@@ -33,7 +33,11 @@ class MinStack {
   void pop() {
     Node *prev_head_pointer = head_pointer;
     head_pointer = (*prev_head_pointer).next_node_pointer;
-    min_node_pointer = (*prev_head_pointer).min_pointer;
+    Node *new_min_node_pointer = (*prev_head_pointer).min_pointer;
+    if (new_min_node_pointer != min_node_pointer){
+      free(min_node_pointer);
+      min_node_pointer = new_min_node_pointer;
+    }
     free(prev_head_pointer);
   }
   
