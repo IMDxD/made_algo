@@ -11,10 +11,10 @@ int INITIAL_SIZE = 4;
 class PostfixStack {
 
  private:
-  int *array_ptr;
+  int* array_ptr;
 
   void ensure_capacity(int new_capacity) {
-    int *new_array = new int[new_capacity];
+    int* new_array = new int[new_capacity];
     for (size_t i = 0; i < size; i++) {
       *(new_array + i) = *(array_ptr + i);
     }
@@ -29,7 +29,7 @@ class PostfixStack {
 
   PostfixStack() : array_ptr(new int[INITIAL_SIZE]), size(0), capacity(INITIAL_SIZE) {}
 
-  void push(const int &element) {
+  void push(const int& element) {
     *(array_ptr + size) = element;
     size++;
     if (size == capacity) {

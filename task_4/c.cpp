@@ -8,13 +8,13 @@ int INITIAL_SIZE = 4;
 class QueueArray {
 
  private:
-  int *array_ptr;
+  int* array_ptr;
   int begin;
   int end;
   int capacity;
 
   void ensure_capacity(int new_capacity) {
-    int *new_array = new int[new_capacity];
+    int* new_array = new int[new_capacity];
     for (size_t i = 0; i < capacity; i++) {
       *(new_array + i) = *(array_ptr + (begin + i) % capacity);
     }
@@ -29,7 +29,7 @@ class QueueArray {
 
   QueueArray() : array_ptr(new int[INITIAL_SIZE]), begin(0), end(0), capacity(INITIAL_SIZE) {}
 
-  void push(const int &element) {
+  void push(const int& element) {
     *(array_ptr + end) = element;
     end = (end + 1) % capacity;
     if (end == begin) {

@@ -7,9 +7,9 @@ using std::min;
 class Node {
  public:
   int value;
-  Node *next_node_pointer;
-  Node *min_pointer;
-  Node(int new_value, Node *new_pointer, Node *new_min_node_pointer) :
+  Node* next_node_pointer;
+  Node* min_pointer;
+  Node(int new_value, Node* new_pointer, Node* new_min_node_pointer) :
       value(new_value),
       next_node_pointer(new_pointer),
       min_pointer(new_min_node_pointer) {}
@@ -17,13 +17,13 @@ class Node {
 
 class MinStack {
  public:
-  Node *head_pointer;
-  Node *min_node_pointer;
+  Node* head_pointer;
+  Node* min_node_pointer;
 
   MinStack() : head_pointer(nullptr), min_node_pointer(nullptr) {}
 
   void push(int element) {
-    Node *new_node = new Node(element, head_pointer, min_node_pointer);
+    Node* new_node = new Node(element, head_pointer, min_node_pointer);
     head_pointer = new_node;
     if (min_node_pointer == nullptr || element < (*min_node_pointer).value) {
       min_node_pointer = new_node;
@@ -31,12 +31,12 @@ class MinStack {
   }
 
   void pop() {
-    Node *prev_head_pointer = head_pointer;
+    Node* prev_head_pointer = head_pointer;
     head_pointer = (*prev_head_pointer).next_node_pointer;
     min_node_pointer = (*prev_head_pointer).min_pointer;
     free(prev_head_pointer);
   }
-  
+
   int minimum() const {
     return (*min_node_pointer).value;
   }
