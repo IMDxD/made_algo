@@ -1,16 +1,17 @@
 #include "iostream"
+#include "list"
 #include "string"
 #include "vector"
 
 using std::cin;
 using std::cout;
+using std::list;
 using std::string;
 using std::swap;
 using std::vector;
 
-const size_t OPER_CNT = 100'000;
-const unsigned A = 7;
-const unsigned P = 200'003;
+const size_t INITIAL_SIZE = 4098;
+const size_t MAX_SIZE = 2'000'002;
 
 struct Node {
  public:
@@ -18,151 +19,131 @@ struct Node {
   string value;
   Node* prev_map_node;
   Node* next_map_node;
-  Node* next_node;
 
   Node(string& new_key, string& new_value, Node* new_prev_map_node) :
-      key(new_key), value(new_value), next_node(nullptr),
-      prev_map_node(new_prev_map_node), next_map_node(nullptr) {};
-};
-
-class LinkedList {
- private:
-  Node* first_node;
-  Node* last_node;
-
- public:
-  LinkedList() : first_node(nullptr), last_node(nullptr) {};
-
-  Node* add(string& key, string& value, Node* prev_node) {
-    if (this->first_node == nullptr) {
-      Node* new_node = new Node(key, value, prev_node);
-      this->first_node = new_node;
-      this->last_node = new_node;
-    } else {
-      Node* cur = this->first_node;
-      while (cur != nullptr) {
-        if (cur->key == key) {
-          cur->value = value;
-          return nullptr;
-        }
-        cur = cur->next_node;
-      }
-      Node* new_node = new Node(key, value, prev_node);
-      this->last_node->next_node = new_node;
-      this->last_node = new_node;
-    }
-    return this->last_node;
-  }
-
-  Node* get(const string& key) {
-    Node* cur = this->first_node;
-    while (cur != nullptr) {
-      if (cur->key == key) {
-        return cur;
-      }
-      cur = cur->next_node;
-    }
-    return nullptr;
-  }
-
-  Node* remove(const string& key) {
-    Node* cur = this->first_node;
-    Node* prev = nullptr;
-    while (cur != nullptr) {
-      if (cur->key == key) {
-        if (prev != nullptr) {
-          prev->next_node = cur->next_node;
-        } else {
-          this->first_node = cur->next_node;
-          if (this->last_node == cur) {
-            this->last_node = nullptr;
-          }
-        }
-        return cur;
-      }
-      prev = cur;
-      cur = cur->next_node;
-    }
-    return nullptr;
-  }
+      key(new_key), value(new_value), prev_map_node(new_prev_map_node),
+      next_map_node(nullptr) {};
 };
 
 class Map {
  private:
 
-  vector<LinkedList> array;
-  unsigned p;
-  unsigned a;
+  vector<list<Node*>>* array;
+  size_t size_;
+  const unsigned P = 2'000'003;
+  const unsigned A = 7;
   Node* last_node;
 
   unsigned hash_function(string& value) const {
     unsigned res = 0;
     for (char c: value) {
-      res = (res * this->a + c) % this->p;
+      res = (res * this->A + c) % this->P;
     }
-    return res % this->array.size();
+    return res % this->array->size();
+  }
+
+  void rehash(size_t new_size) {
+    vector<list<Node*>>* old_array = this->array;
+    this->array = new vector<list<Node*>>(new_size);
+    this->size_ = 0;
+    for (auto& chain: *old_array) {
+      for (auto& el: chain) {
+        this->put(el);
+      }
+    }
+    old_array->clear();
+    delete old_array;
   }
 
  public:
-  Map(size_t new_size, int new_a, unsigned new_p) {
-    this->array = vector<LinkedList>(new_size * 2);
-    this->a = new_a;
-    this->p = new_p;
-    this->last_node = nullptr;
-  }
+  Map() : array(new vector<list<Node*>>(INITIAL_SIZE)), last_node(nullptr), size_(0) {};
 
   string get(string key) {
     size_t index = this->hash_function(key);
-    Node* gotten_node = this->array[index].get(key);
-    if (gotten_node == nullptr) {
-      return "";
+    list<Node*>* chain = &(*this->array)[index];
+    for (auto& el: *chain) {
+      if (el->key == key) {
+        return el->value;
+      }
     }
-    return gotten_node->value;
+    return "none";
   }
 
   string next(string key) {
     size_t index = this->hash_function(key);
-    Node* gotten_node = this->array[index].get(key);
-    if (gotten_node == nullptr || gotten_node->next_map_node == nullptr) {
-      return "";
+    list<Node*> chain = (*this->array)[index];
+    for (auto& el: chain) {
+      if (el->key == key && el->next_map_node != nullptr) {
+        return el->next_map_node->value;
+      }
     }
-    return gotten_node->next_map_node->value;
+    return "none";
   }
 
   string prev(string key) {
     size_t index = this->hash_function(key);
-    Node* gotten_node = this->array[index].get(key);
-    if (gotten_node == nullptr || gotten_node->prev_map_node == nullptr) {
-      return "";
+    list<Node*> chain = (*this->array)[index];
+    for (auto& el: chain) {
+      if (el->key == key && el->prev_map_node != nullptr) {
+        return el->prev_map_node->value;
+      }
     }
-    return gotten_node->prev_map_node->value;
+    return "none";
   }
 
   void put(string& key, string& value) {
-    size_t index = this->hash_function(key);
-    Node* added_node = this->array[index].add(key, value, this->last_node);
-    if (added_node != nullptr) {
-      if (this->last_node != nullptr && this->last_node->key != key) {
-        this->last_node->next_map_node = added_node;
-      }
-      this->last_node = added_node;
+    Node* node = new Node(key, value, last_node);
+    put(node);
+  }
+
+  void put(Node* node) {
+    if (this->size_ == this->array->size() / 2 && this->array->size() < MAX_SIZE) {
+      size_t new_size = std::max(this->array->size() * 2, MAX_SIZE);
+      this->rehash(new_size);
     }
+    size_t index = this->hash_function(node->key);
+    list<Node*>* chain = &(*this->array)[index];
+    for (auto& el: *chain) {
+      if (el->key == node->key) {
+        el->value = node->value;
+        return;
+      }
+    }
+    chain->push_back(node);
+    if (last_node != nullptr) {
+      this->last_node->next_map_node = node;
+    }
+    this->last_node = node;
   }
 
   void remove(string key) {
     size_t index = this->hash_function(key);
-    Node* deleted_node = this->array[index].remove(key);
-    if (deleted_node != nullptr) {
-      if (deleted_node->next_map_node != nullptr) {
-        deleted_node->next_map_node->prev_map_node = deleted_node->prev_map_node;
+    size_t i = 0;
+    auto* chain = &(*this->array)[index];
+    auto it = chain->begin();
+    for (auto el: *chain) {
+      if (el->key == key) {
+        Node* deleted_node = el;
+        if (deleted_node->next_map_node != nullptr) {
+          deleted_node->next_map_node->prev_map_node = deleted_node->prev_map_node;
+        }
+        if (deleted_node->prev_map_node != nullptr) {
+          deleted_node->prev_map_node->next_map_node = deleted_node->next_map_node;
+        }
+        if (deleted_node == this->last_node) {
+          this->last_node = deleted_node->prev_map_node;
+        }
+        advance(it, i);
+        chain->erase(it);
+        --this->size_;
+        if (this->size_ == this->array->size() / 8 && this->array->size() > INITIAL_SIZE) {
+          size_t new_size = std::min(this->array->size() / 8, INITIAL_SIZE);
+          this->rehash(new_size);
+        }
+        delete deleted_node;
+        break;
       }
-      if (deleted_node->prev_map_node != nullptr) {
-        deleted_node->prev_map_node->next_map_node = deleted_node->next_map_node;
-      }
-      if (deleted_node == this->last_node) {
-        this->last_node = deleted_node->prev_map_node;
-      }
-      delete deleted_node;
+      ++i;
     }
   }
 };
@@ -170,7 +151,7 @@ class Map {
 int main() {
   std::ios_base::sync_with_stdio(false);
   std::cin.tie(nullptr);
-  Map dict = Map(OPER_CNT, A, P);
+  Map dict = Map();
   string oper;
   string key;
   string value;
