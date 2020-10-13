@@ -94,6 +94,10 @@ class Set {
         (*this->array)[index] = this->null_value;
         restore_hash(index);
         --this->size_;
+        if (this->size_ == this->array->size() / 8){
+          size_t new_size = std::min(this->array->size() / 8, INITIAL_SIZE);
+          this->rehash(new_size);
+        }
         break;
       }
       index = (index + 1) % this->array->size();
