@@ -33,7 +33,7 @@ class Set {
     return modulo(static_cast<int>(value * this->A), this->P) % this->array->size();
   }
 
-  size_t find_index(int value){
+  size_t find_index(int value) {
     size_t index = this->hash_function(value);
     while (!((*this->array)[index] == null_value || (*this->array)[index] == value)) {
       index = (index + 1) % this->array->size();
@@ -41,19 +41,20 @@ class Set {
     return index;
   }
 
-  void rehash(size_t new_size){
+  void rehash(size_t new_size) {
     vector<int>* old_array = this->array;
     this->array = new vector<int>(new_size, INT32_MAX);
     this->size_ = 0;
-    for (auto el: *old_array){
-      if (el != this->null_value){
+    for (auto el: *old_array) {
+      if (el != this->null_value) {
         this->put(el);
       }
     }
+    old_array->clear();
     delete old_array;
   }
 
-  void restore_hash(size_t index){
+  void restore_hash(size_t index) {
     size_t next_index = (index + 1) % this->array->size();
     size_t swap_index = index;
     while ((*this->array)[next_index] != this->null_value) {
@@ -67,7 +68,7 @@ class Set {
   }
 
  public:
-  Set(): array(new vector<int>(INITIAL_SIZE, INT32_MAX)), size_(0) {};
+  Set() : array(new vector<int>(INITIAL_SIZE, INT32_MAX)), size_(0) {};
 
   bool contains(int value) {
     size_t index = this->find_index(value);
@@ -75,7 +76,7 @@ class Set {
   }
 
   void put(int value) {
-    if (this->size_ == this->array->size() /2){
+    if (this->size_ == this->array->size() / 2 && this->array->size() < MAX_SIZE) {
       size_t new_size = std::max(this->array->size() * 2, MAX_SIZE);
       this->rehash(new_size);
     }
@@ -94,7 +95,7 @@ class Set {
         (*this->array)[index] = this->null_value;
         restore_hash(index);
         --this->size_;
-        if (this->size_ == this->array->size() / 8){
+        if (this->size_ == this->array->size() / 8 && this->array->size() > INITIAL_SIZE) {
           size_t new_size = std::min(this->array->size() / 8, INITIAL_SIZE);
           this->rehash(new_size);
         }
