@@ -57,7 +57,8 @@ class Set {
     size_t next_index = (swap_index + 1) % this->array->size();
     while ((*this->array)[next_index] != this->null_value) {
       size_t next_hash = hash_function((*this->array)[next_index]);
-      if (next_hash > next_index || (next_hash <= swap_index && swap_index < next_index)) {
+      if (!((swap_index < next_hash || swap_index > next_index) && next_hash <= next_index) &&
+          !(swap_index > next_index && next_hash > swap_index)) {
         swap((*this->array)[swap_index], (*this->array)[next_index]);
         swap_index = next_index;
       }

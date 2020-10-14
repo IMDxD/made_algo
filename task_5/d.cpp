@@ -10,7 +10,7 @@ using std::string;
 using std::swap;
 using std::vector;
 
-const size_t INITIAL_SIZE = 16;
+const size_t INITIAL_SIZE = 256;
 const size_t MAX_SIZE = 200'000;
 
 class Set {
@@ -53,7 +53,8 @@ class Set {
     size_t next_index = (swap_index + 1) % this->array->size();
     while (!(*this->array)[next_index].empty()) {
       size_t next_hash = hash_function((*this->array)[next_index]);
-      if (next_hash > next_index || (next_hash <= swap_index && swap_index < next_index)) {
+      if (!((swap_index < next_hash || swap_index > next_index) && next_hash <= next_index) &&
+          !(swap_index > next_index && next_hash > swap_index)) {
         swap((*this->array)[swap_index], (*this->array)[next_index]);
         swap_index = next_index;
       }
@@ -103,7 +104,6 @@ class Set {
     }
   }
 };
-
 class Map {
  private:
 
@@ -132,7 +132,8 @@ class Map {
     size_t swap_index = index;
     while ((*this->array)[next_index] != nullptr) {
       size_t next_hash = hash_function((*this->array)[next_index]->first);
-      if (next_hash > next_index || (next_hash <= swap_index && swap_index < next_index)) {
+      if (!((swap_index < next_hash || swap_index > next_index) && next_hash <= next_index) &&
+          !(swap_index > next_index && next_hash > swap_index)) {
         swap((*this->array)[swap_index], (*this->array)[next_index]);
         swap_index = next_index;
       }
@@ -187,8 +188,8 @@ class Map {
 };
 
 int main() {
-//  std::ios_base::sync_with_stdio(false);
-//  std::cin.tie(nullptr);
+  std::ios_base::sync_with_stdio(false);
+  std::cin.tie(nullptr);
   Map multi_map = Map();
   string oper;
   string key;

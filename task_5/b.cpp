@@ -14,7 +14,7 @@ using std::vector;
 template<class T1, class T2>
 using dict = vector<list<pair<T1, T2>>>;
 
-const size_t INITIAL_SIZE = 4098;
+const size_t INITIAL_SIZE = 2048;
 const size_t MAX_SIZE = 2'000'002;
 
 class Map {
@@ -92,7 +92,7 @@ class Map {
         chain->erase(it);
         --this->size_;
         if (this->size_ == this->array->size() / 8 && this->array->size() > INITIAL_SIZE) {
-          size_t new_size = std::max(this->array->size() / 8, INITIAL_SIZE);
+          size_t new_size = std::max(this->array->size() / 2, INITIAL_SIZE);
           this->rehash(new_size);
         }
         break;
