@@ -91,21 +91,15 @@ class Set {
   }
 
   void remove(string& value) {
-    size_t index = this->hash_function(value);
-    size_t step = 0;
-    while (!(*this->array)[index].empty() && step < this->array->size()) {
-      if ((*this->array)[index] == value) {
-        (*this->array)[index] = "";
-        restore_hash(index);
-        --this->size_;
-        if (this->size_ == this->array->size() / 8 && this->array->size() > INITIAL_SIZE) {
-          size_t new_size = std::max(this->array->size() / 2, INITIAL_SIZE);
-          this->rehash(new_size);
-        }
-        break;
+    size_t index = this->find_index(value);
+    if ((*this->array)[index] == value) {
+      (*this->array)[index] = "";
+      restore_hash(index);
+      --this->size_;
+      if (this->size_ == this->array->size() / 8 && this->array->size() > INITIAL_SIZE) {
+        size_t new_size = std::max(this->array->size() / 2, INITIAL_SIZE);
+        this->rehash(new_size);
       }
-      index = (index + 1) % this->array->size();
-      ++step;
     }
   }
 };
