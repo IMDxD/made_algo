@@ -1,13 +1,10 @@
 #include "algorithm"
 #include "iostream"
-#include "list"
 #include "string"
 #include "vector"
 
-using std::none_of;
 using std::cin;
 using std::cout;
-using std::list;
 using std::pair;
 using std::string;
 using std::swap;
@@ -43,7 +40,6 @@ class Set {
   void rehash(size_t new_size) {
     vector<string>* old_array = this->array;
     this->array = new vector<string>(new_size);
-    this->size_ = 0;
     for (auto& el: *old_array) {
       if (!el.empty()) {
         size_t index = this->find_index(el);
@@ -103,7 +99,7 @@ class Set {
         restore_hash(index);
         --this->size_;
         if (this->size_ == this->array->size() / 8 && this->array->size() > INITIAL_SIZE) {
-          size_t new_size = std::max(this->array->size() / 8, INITIAL_SIZE);
+          size_t new_size = std::max(this->array->size() / 2, INITIAL_SIZE);
           this->rehash(new_size);
         }
         break;
@@ -197,8 +193,8 @@ class Map {
 };
 
 int main() {
-  std::ios_base::sync_with_stdio(false);
-  std::cin.tie(nullptr);
+//  std::ios_base::sync_with_stdio(false);
+//  std::cin.tie(nullptr);
   Map multi_map = Map();
   string oper;
   string key;
