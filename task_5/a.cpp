@@ -44,26 +44,24 @@ class Set {
   void rehash(size_t new_size) {
     vector<int>* old_array = this->array;
     this->array = new vector<int>(new_size, INT32_MAX);
-    this->size_ = 0;
-    for (auto el: *old_array) {
+    for (int el: *old_array) {
       if (el != this->null_value) {
-        this->put(el);
+        size_t index = this->find_index(el);
+        (*this->array)[index] = el;
       }
     }
-    old_array->clear();
     delete old_array;
   }
 
-  void restore_hash(size_t index) {
-    size_t next_index = (index + 1) % this->array->size();
-    size_t swap_index = index;
+  void restore_hash(size_t swap_index) {
+    size_t next_index = (swap_index + 1) % this->array->size();
     while ((*this->array)[next_index] != this->null_value) {
       size_t next_hash = hash_function((*this->array)[next_index]);
-      if (next_hash > next_index || next_hash <= index) {
+      if (next_hash > next_index || (next_hash <= swap_index && swap_index < next_index)) {
         swap((*this->array)[swap_index], (*this->array)[next_index]);
         swap_index = next_index;
       }
-      ++next_index;
+      next_index = (next_index + 1) % this->array->size();
     }
   }
 
@@ -77,7 +75,7 @@ class Set {
 
   void put(int value) {
     if (this->size_ == this->array->size() / 2 && this->array->size() < MAX_SIZE) {
-      size_t new_size = std::max(this->array->size() * 2, MAX_SIZE);
+      size_t new_size = std::min(this->array->size() * 2, MAX_SIZE);
       this->rehash(new_size);
     }
     size_t index = this->find_index(value);
@@ -88,21 +86,15 @@ class Set {
   }
 
   void remove(int value) {
-    size_t index = this->hash_function(value);
-    size_t step = 0;
-    while ((*this->array)[index] != this->null_value && step < this->array->size()) {
-      if ((*this->array)[index] == value) {
-        (*this->array)[index] = this->null_value;
-        restore_hash(index);
-        --this->size_;
-        if (this->size_ == this->array->size() / 8 && this->array->size() > INITIAL_SIZE) {
-          size_t new_size = std::min(this->array->size() / 8, INITIAL_SIZE);
-          this->rehash(new_size);
-        }
-        break;
+    size_t index = this->find_index(value);
+    if ((*this->array)[index] == value) {
+      (*this->array)[index] = this->null_value;
+      restore_hash(index);
+      --this->size_;
+      if (this->size_ == this->array->size() / 8 && this->array->size() > INITIAL_SIZE) {
+        size_t new_size = std::max(this->array->size() / 2, INITIAL_SIZE);
+        this->rehash(new_size);
       }
-      index = (index + 1) % this->array->size();
-      ++step;
     }
   }
 };

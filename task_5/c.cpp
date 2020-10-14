@@ -51,7 +51,6 @@ class Map {
         this->put(el);
       }
     }
-    old_array->clear();
     delete old_array;
   }
 
@@ -98,7 +97,7 @@ class Map {
 
   void put(Node* node) {
     if (this->size_ == this->array->size() / 2 && this->array->size() < MAX_SIZE) {
-      size_t new_size = std::max(this->array->size() * 2, MAX_SIZE);
+      size_t new_size = std::min(this->array->size() * 2, MAX_SIZE);
       this->rehash(new_size);
     }
     size_t index = this->hash_function(node->key);
@@ -137,7 +136,7 @@ class Map {
         chain->erase(it);
         --this->size_;
         if (this->size_ == this->array->size() / 8 && this->array->size() > INITIAL_SIZE) {
-          size_t new_size = std::min(this->array->size() / 8, INITIAL_SIZE);
+          size_t new_size = std::max(this->array->size() / 8, INITIAL_SIZE);
           this->rehash(new_size);
         }
         delete deleted_node;
