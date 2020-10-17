@@ -50,15 +50,15 @@ int main() {
   size_t i = row_count - 1;
   size_t j = column_count - 1;
   vector<char> path(i + j);
-  while (i > 0 || j > 0){
+  while (i > 0 || j > 0) {
     path[i + j - 1] = path_matrix[i][j];
-    if (path_matrix[i][j] == 'R'){
+    if (path_matrix[i][j] == 'R') {
       j -= 1;
     } else {
       i -= 1;
     }
   }
-  for (auto c: path){
+  for (auto c: path) {
     cout << c;
   }
   cout << "\n";
