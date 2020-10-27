@@ -1,5 +1,6 @@
 #include "algorithm"
 #include "cmath"
+#include "cstdio"
 #include "iostream"
 #include "vector"
 
@@ -40,6 +41,7 @@ size_t next_v(int answer, size_t prev_v, size_t i, size_t n) {
 }
 
 int main() {
+    std::ios::sync_with_stdio(false);
     size_t n, m;
     int a;
     cin >> n >> m;

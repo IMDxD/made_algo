@@ -1,3 +1,4 @@
+#include <cstdio>
 #include "iostream"
 #include "string"
 #include "vector"
@@ -54,6 +55,7 @@ class FenfikTree {
 };
 
 int main() {
+    std::ios::sync_with_stdio(false);
     size_t n;
     cin >> n;
     vector<long long> prefix_sum(n);

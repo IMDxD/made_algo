@@ -1,5 +1,6 @@
 #include "algorithm"
 #include "cmath"
+#include <cstdio>
 #include "iostream"
 #include "vector"
 
@@ -21,6 +22,7 @@ long long modulus(long long value, int mod) {
 }
 
 int main() {
+    std::ios::sync_with_stdio(false);
     size_t n;
     int a, x, y;
     cin >> n;
