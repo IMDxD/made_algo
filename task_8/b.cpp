@@ -32,11 +32,11 @@ struct Node {
   }
 };
 
-class BST {
+class AVL {
 
  public:
 
-  BST() : root(nullptr) {};
+  AVL() : root(nullptr) {};
 
   void insert(int value) {
       root = insert(value, root);
@@ -174,7 +174,7 @@ class BST {
 
 int main() {
     std::ios::sync_with_stdio(false);
-    BST tree = BST();
+    AVL tree = AVL();
     int oper_value;
     string oper_name;
     while (cin >> oper_name) {
