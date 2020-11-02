@@ -1,3 +1,4 @@
+#include <cstdio>
 #include "iostream"
 #include "string"
 
@@ -13,38 +14,41 @@ struct Node {
   size_t height;
 
   explicit Node(int value) : value(value), right_child(nullptr), left_child(nullptr), height(1) {};
+
+  Node(Node& copy) = default;
+
+  void update_height() {
+      size_t left_child_height = get_left_height();
+      size_t right_child_height = get_right_height();
+      height = std::max(left_child_height, right_child_height) + 1;
+  }
+
+  size_t get_left_height() const {
+      return left_child == nullptr ? 0 : left_child->height;
+  }
+
+  size_t get_right_height() const {
+      return right_child == nullptr ? 0 : right_child->height;
+  }
 };
 
-class AVL {
+class BST {
 
  public:
 
-  AVL() : root(nullptr) {};
+  BST() : root(nullptr) {};
 
   void insert(int value) {
-      if (root == nullptr) {
-          root = new Node(value);
-          return;
+      root = insert(value, root);
+      root->update_height();
+  }
+
+  void remove(int value) {
+      root = remove(value, root);
+      if (root != nullptr) {
+          root->update_height();
+          balance(root);
       }
-      Node* cur_node_ptr = root;
-      Node* prev_node_ptr = nullptr;
-      while (cur_node_ptr != nullptr && cur_node_ptr->value != value) {
-          prev_node_ptr = cur_node_ptr;
-          if (cur_node_ptr->value > value) {
-              cur_node_ptr = cur_node_ptr->left_child;
-          } else if (cur_node_ptr->value < value) {
-              cur_node_ptr = cur_node_ptr->right_child;
-          }
-      }
-      if (cur_node_ptr == nullptr && prev_node_ptr->value > value) {
-          prev_node_ptr->left_child = new Node(value);
-      } else if (cur_node_ptr == nullptr) {
-          prev_node_ptr->right_child = new Node(value);
-      }
-      if (prev_node_ptr->height == 1){
-          update_height(value, 1);
-      }
-      balance(cur_node_ptr, prev_node_ptr);
   }
 
   bool exist(int value) {
@@ -58,22 +62,6 @@ class AVL {
       }
       return cur_node_ptr != nullptr;
   }
-
-  void remove(int value) {
-      Node* cur_node_ptr = root;
-      Node* prev_node_ptr = nullptr;
-      while (cur_node_ptr != nullptr && cur_node_ptr->value != value) {
-          prev_node_ptr = cur_node_ptr;
-          if (cur_node_ptr->value > value) {
-              cur_node_ptr = cur_node_ptr->left_child;
-          } else if (cur_node_ptr->value < value) {
-              cur_node_ptr = cur_node_ptr->right_child;
-          }
-      }
-      if (cur_node_ptr != nullptr) {
-          remove_node(cur_node_ptr, prev_node_ptr);
-      }
-  };
 
   Node* next(int value) {
       Node* cur_node = root;
@@ -107,72 +95,86 @@ class AVL {
 
   Node* root;
 
-  void update_height(int value, size_t addition){
-      Node* cur_node_ptr = root;
-      while (cur_node_ptr != nullptr && cur_node_ptr->value != value) {
-          cur_node_ptr->height += addition;
-          if (cur_node_ptr->value > value) {
-              cur_node_ptr = cur_node_ptr->left_child;
-          } else {
-              cur_node_ptr = cur_node_ptr->right_child;
-          }
+  Node* insert(int value, Node* node_ptr) {
+      if (node_ptr == nullptr) {
+          Node* new_node = new Node(value);
+          return new_node;
+      } else if (value < node_ptr->value) {
+          node_ptr->left_child = insert(value, node_ptr->left_child);
+      } else if (value > node_ptr->value) {
+          node_ptr->right_child = insert(value, node_ptr->right_child);
       }
+      node_ptr->update_height();
+      balance(node_ptr);
+      return node_ptr;
   }
 
-  void remove_node(Node* node_ptr, Node* prev_node_ptr) {
-      int update_value = node_ptr->value;
-      if (node_ptr->left_child == nullptr && node_ptr->right_child == nullptr) {
-          if (prev_node_ptr == nullptr) {
-              root = nullptr;
-          } else if (prev_node_ptr->value > node_ptr->value) {
-              prev_node_ptr->left_child = nullptr;
-          } else {
-              prev_node_ptr->right_child = nullptr;
-          }
-          if (prev_node_ptr->left_child == nullptr && prev_node_ptr->right_child == nullptr){
-              update_height(update_value, -1);
-          }
+  Node* remove(int value, Node* node_ptr) {
+      if (node_ptr == nullptr) {
+          return nullptr;
+      } else if (value < node_ptr->value) {
+          node_ptr->left_child = remove(value, node_ptr->left_child);
+      } else if (value > node_ptr->value) {
+          node_ptr->right_child = remove(value, node_ptr->right_child);
+      } else if (node_ptr->right_child == nullptr && node_ptr->left_child == nullptr) {
+          return nullptr;
       } else if (node_ptr->left_child == nullptr) {
-          *node_ptr = *node_ptr->right_child;
-          update_height(update_value, -1);
+          return node_ptr->right_child;
       } else if (node_ptr->right_child == nullptr) {
-          *node_ptr = *node_ptr->left_child;
-          update_height(update_value, -1);
+          return node_ptr->left_child;
       } else {
-          Node* replace_node = node_ptr->left_child;
-          Node* prev_replace_node = nullptr;
-          while (replace_node->right_child != nullptr) {
-              prev_replace_node = replace_node;
-              replace_node = replace_node->right_child;
-          }
-          node_ptr->value = replace_node->value;
-          if (prev_replace_node != nullptr) {
-              prev_replace_node->right_child = replace_node->left_child;
-              --prev_replace_node->height;
-              update_height(prev_replace_node->value, -1);
-          } else {
-              node_ptr->left_child = nullptr;
-          }
+          node_ptr->value = find_max(node_ptr->left_child)->value;
+          node_ptr->left_child = remove(node_ptr->value, node_ptr->left_child);
       }
-      balance(prev_node_ptr);
+      node_ptr->update_height();
+      balance(node_ptr);
+      return node_ptr;
   }
 
-  void balance(Node* node_ptr){
-      size_t left_child_height = node_ptr->left_child == nullptr ? 0: node_ptr->left_child->height;
-      size_t right_child_height = node_ptr->right_child == nullptr ? 0: node_ptr->right_child->height;
-      if (left_child_height - right_child_height == -2){
-          small_rotate_right(node_ptr, node_ptr);
+  static Node* find_max(Node* node_ptr) {
+      while (node_ptr->right_child != nullptr) {
+          node_ptr = node_ptr->right_child;
+      }
+      return node_ptr;
+  }
+
+  static void balance(Node* node_ptr) {
+      int height_diff = static_cast<int>(node_ptr->get_left_height()) - static_cast<int>(node_ptr->get_right_height());
+      if (height_diff > 1) {
+          if (node_ptr->left_child->get_right_height() > node_ptr->left_child->get_left_height()) {
+              small_rotate_left(node_ptr->left_child);
+          }
+          small_rotate_right(node_ptr);
+      } else if (height_diff < -1) {
+          if (node_ptr->right_child->get_left_height() > node_ptr->right_child->get_right_height()) {
+              small_rotate_right(node_ptr->right_child);
+          }
+          small_rotate_left(node_ptr);
       }
   }
 
-  void small_rotate_right(Node* node_ptr, Node* prev_node_ptr){
-
+  static void small_rotate_right(Node* node_ptr) {
+      Node* tmp = new Node(*node_ptr);
+      tmp->left_child = node_ptr->left_child->right_child;
+      tmp->update_height();
+      *node_ptr = *node_ptr->left_child;
+      node_ptr->right_child = tmp;
+      node_ptr->update_height();
   }
 
+  static void small_rotate_left(Node* node_ptr) {
+      Node* tmp = new Node(*node_ptr);
+      tmp->right_child = node_ptr->right_child->left_child;
+      tmp->update_height();
+      *node_ptr = *node_ptr->right_child;
+      node_ptr->left_child = tmp;
+      node_ptr->update_height();
+  }
 };
 
 int main() {
-    AVL tree = AVL();
+    std::ios::sync_with_stdio(false);
+    BST tree = BST();
     int oper_value;
     string oper_name;
     while (cin >> oper_name) {
