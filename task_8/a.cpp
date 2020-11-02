@@ -21,25 +21,11 @@ class BST {
   BST() : root(nullptr) {};
 
   void insert(int value) {
-      if (root == nullptr) {
-          root = new Node(value);
-          return;
-      }
-      Node* cur_node_ptr = root;
-      Node* prev_node_ptr = nullptr;
-      while (cur_node_ptr != nullptr && cur_node_ptr->value != value) {
-          prev_node_ptr = cur_node_ptr;
-          if (cur_node_ptr->value > value) {
-              cur_node_ptr = cur_node_ptr->left_child;
-          } else if (cur_node_ptr->value < value) {
-              cur_node_ptr = cur_node_ptr->right_child;
-          }
-      }
-      if (cur_node_ptr == nullptr && prev_node_ptr->value > value) {
-          prev_node_ptr->left_child = new Node(value);
-      } else if (cur_node_ptr == nullptr) {
-          prev_node_ptr->right_child = new Node(value);
-      }
+      root = insert(value, root);
+  }
+
+  void remove(int value) {
+      root = remove(value, root);
   }
 
   bool exist(int value) {
@@ -52,52 +38,6 @@ class BST {
           }
       }
       return cur_node_ptr != nullptr;
-  }
-
-  void remove(int value) {
-      Node* cur_node_ptr = root;
-      Node* prev_node_ptr = nullptr;
-      while (cur_node_ptr != nullptr && cur_node_ptr->value != value) {
-          prev_node_ptr = cur_node_ptr;
-          if (cur_node_ptr->value > value) {
-              cur_node_ptr = cur_node_ptr->left_child;
-          } else if (cur_node_ptr->value < value) {
-              cur_node_ptr = cur_node_ptr->right_child;
-          }
-      }
-      if (cur_node_ptr != nullptr) {
-          if (prev_node_ptr == nullptr) {
-              root = nullptr;
-          } else if (prev_node_ptr->value > value) {
-              prev_node_ptr->left_child = remove_node(cur_node_ptr);
-              if (prev_node_ptr->left_child != cur_node_ptr){
-                  delete cur_node_ptr;
-              }
-          } else {
-              prev_node_ptr->right_child = remove_node(cur_node_ptr);
-              if (prev_node_ptr->left_child != cur_node_ptr){
-                  delete cur_node_ptr;
-              }
-          }
-      }
-  };
-
-  Node* remove_node(Node* node_ptr) {
-      if (node_ptr->left_child == nullptr && node_ptr->right_child == nullptr) {
-          return nullptr;
-      }
-      if (node_ptr->left_child == nullptr) {
-          return node_ptr->right_child;
-      } else if (node_ptr->right_child == nullptr) {
-          return node_ptr->left_child;
-      } else {
-          Node* replace_node = find_max(node_ptr->left_child);
-          node_ptr->value = replace_node->value;
-          Node* to_delete = replace_node->left_child;
-          *replace_node = *replace_node->left_child;
-          delete to_delete;
-          return node_ptr;
-      }
   }
 
   Node* next(int value) {
@@ -132,13 +72,44 @@ class BST {
 
   Node* root;
 
-  static Node* find_max(Node* cur_ptr) {
-      while (cur_ptr->right_child != nullptr) {
-          cur_ptr = cur_ptr->right_child;
+  Node* insert(int value, Node* node_ptr) {
+      if (node_ptr == nullptr) {
+          Node* new_node = new Node(value);
+          return new_node;
+      } else if (value < node_ptr->value) {
+          node_ptr->left_child = insert(value, node_ptr->left_child);
+      } else if (value > node_ptr->value) {
+          node_ptr->right_child = insert(value, node_ptr->right_child);
       }
-      return cur_ptr;
+      return node_ptr;
   }
 
+  Node* remove(int value, Node* node_ptr) {
+      if (node_ptr == nullptr) {
+          return nullptr;
+      } else if (value < node_ptr->value) {
+          node_ptr->left_child = remove(value, node_ptr->left_child);
+      } else if (value > node_ptr->value) {
+          node_ptr->right_child = remove(value, node_ptr->right_child);
+      } else if (node_ptr->right_child == nullptr && node_ptr->left_child == nullptr) {
+          return nullptr;
+      } else if (node_ptr->left_child == nullptr) {
+          return node_ptr->right_child;
+      } else if (node_ptr->right_child == nullptr) {
+          return node_ptr->left_child;
+      } else {
+          node_ptr->value = find_max(node_ptr->left_child)->value;
+          node_ptr->left_child = remove(node_ptr->value, node_ptr->left_child);
+      }
+      return node_ptr;
+  }
+
+  static Node* find_max(Node* node_ptr) {
+      while (node_ptr->right_child != nullptr) {
+          node_ptr = node_ptr->right_child;
+      }
+      return node_ptr;
+  }
 };
 
 int main() {
