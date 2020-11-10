@@ -55,7 +55,7 @@ class Treap {
   }
 
   void print_tree() {
-      if (root != nullptr){
+      if (root != nullptr) {
           cout << root->tree_size << "\n";
           print_tree(root);
       } else {
