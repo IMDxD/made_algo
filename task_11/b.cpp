@@ -57,4 +57,5 @@ int main() {
         cout << weight << " ";
     }
     cout << "\n";
+    return 0;
 }

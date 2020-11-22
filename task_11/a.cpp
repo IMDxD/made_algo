@@ -76,4 +76,5 @@ int main() {
     for (auto& step: path) {
         cout << step.first << " " << step.second << "\n";
     }
+    return 0;
 }
