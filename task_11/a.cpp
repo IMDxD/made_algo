@@ -12,32 +12,28 @@ using std::vector;
 
 const pair<ssize_t, ssize_t> DEFAULT_COOR = {0, 0};
 const pair<ssize_t, ssize_t> START_FROM = {-1, -1};
+const vector<pair<ssize_t, ssize_t>> HORSE_MOVES = {
+    {-2, 1},
+    {-2, -1},
+    {2, 1},
+    {2, -1},
+    {1, 2},
+    {1, -2},
+    {-1, 2},
+    {-1, -2}
+};
 
-vector<pair<ssize_t, ssize_t>> get_move_coor(ssize_t x, ssize_t y, ssize_t bord_size) {
+bool check_vertex(pair<ssize_t, ssize_t> vertex, pair<ssize_t, ssize_t> move, ssize_t bord_size) {
+    pair<ssize_t, ssize_t> moved{vertex.first + move.first, vertex.second + move.second};
+    return moved.first >= 1 && moved.first <= bord_size && moved.second >= 1 && moved.second <= bord_size;
+}
+
+vector<pair<ssize_t, ssize_t>> get_move_coor(pair<ssize_t, ssize_t> vertex, ssize_t bord_size) {
     vector<pair<ssize_t, ssize_t>> result;
-    if (x > 2 && y < bord_size) {
-        result.emplace_back(x - 2, y + 1);
-    }
-    if (x > 2 && y > 1) {
-        result.emplace_back(x - 2, y - 1);
-    }
-    if (x < bord_size - 1 && y < bord_size) {
-        result.emplace_back(x + 2, y + 1);
-    }
-    if (x < bord_size - 1 && y > 1) {
-        result.emplace_back(x + 2, y - 1);
-    }
-    if (x < bord_size && y > 2) {
-        result.emplace_back(x + 1, y - 2);
-    }
-    if (x < bord_size && y < bord_size - 1) {
-        result.emplace_back(x + 1, y + 2);
-    }
-    if (x > 1 && y > 2) {
-        result.emplace_back(x - 1, y - 2);
-    }
-    if (x > 1 && y < bord_size - 1) {
-        result.emplace_back(x - 1, y + 2);
+    for (auto& move: HORSE_MOVES) {
+        if (check_vertex(vertex, move, bord_size)) {
+            result.emplace_back(vertex.first + move.first, vertex.second + move.second);
+        }
     }
     return result;
 }
@@ -59,7 +55,7 @@ int main() {
     while (!coor_queue.empty() && cur_coor != end_coor) {
         cur_coor = coor_queue.front();
         coor_queue.pop();
-        for (auto& neighbor: get_move_coor(cur_coor.first, cur_coor.second, bord_size)) {
+        for (auto& neighbor: get_move_coor(cur_coor, bord_size)) {
             if (from_matrix[neighbor.first - 1][neighbor.second - 1] == DEFAULT_COOR) {
                 coor_queue.push(neighbor);
                 from_matrix[neighbor.first - 1][neighbor.second - 1] = {cur_coor.first, cur_coor.second};
