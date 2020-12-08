@@ -7,7 +7,6 @@
 using std::cin;
 using std::cout;
 using std::max;
-using std::min;
 using std::queue;
 using std::vector;
 
@@ -69,7 +68,6 @@ int main() {
             }
         }
         if (cur_vertex == vertex_cnt - 1) {
-            cur_vertex = vertex_cnt - 1;
             result += delta;
             while (cur_vertex != 0) {
                 Edge* edge = vertex_path[cur_vertex];
