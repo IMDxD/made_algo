@@ -60,7 +60,7 @@ class Parser {
   Lexer lexer;
 
   int parse_sum(int sign) {
-      int first_n = sign*parse_mult();
+      int first_n = sign * parse_mult();
       char oper_name = lexer.get_current().name;
       if (oper_name == '+') {
           lexer.next();
@@ -108,7 +108,7 @@ class Parser {
 
   int parse() {
       int result = parse_sum(1);
-      if (lexer.get_current().name == '.'){
+      if (lexer.get_current().name == '.') {
           return result;
       } else {
           throw std::invalid_argument("invalid argument");

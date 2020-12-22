@@ -44,7 +44,7 @@ class Lexer {
           return {-1, result};
       } else if (is_number(this->data[this->cur_pos])) {
           int value = 0;
-          while (is_number(this->data[this->cur_pos])) {
+          while (is_number(this->data[this->cur_pos]) && this->cur_pos < this->data.size()) {
               value = value * 10 + this->data[this->cur_pos] - 48;
               ++this->cur_pos;
           }
@@ -53,7 +53,8 @@ class Lexer {
       } else {
           size_t start_pos = this->cur_pos;
           while (!is_number(this->data[this->cur_pos]) &&
-              VALID_TOKEN.find(data[this->cur_pos]) == VALID_TOKEN.end()) {
+              VALID_TOKEN.find(data[this->cur_pos]) == VALID_TOKEN.end() &&
+              this->cur_pos < this->data.size()) {
               ++this->cur_pos;
           }
           string name = data.substr(start_pos, this->cur_pos - start_pos);
@@ -83,14 +84,13 @@ class Lexer {
   }
 };
 
-
 class Parser {
 
  private:
   Lexer lexer;
 
   int parse_sum(int sign) {
-      int first_n = sign*parse_mult();
+      int first_n = sign * parse_mult();
       char oper_name = lexer.get_current().name;
       if (oper_name == '+') {
           lexer.next();
@@ -119,6 +119,7 @@ class Parser {
       if (cur.name != '(') {
           throw std::invalid_argument("invalid argument");
       } else {
+          lexer.next();
           int result = parse_sum(1);
           cur = lexer.get_current();
           if (cur.name != ')') {
@@ -126,7 +127,7 @@ class Parser {
           } else {
               lexer.next();
               if (result > 0) {
-                  return 5 * result;
+                  return 5 + result;
               } else {
                   return -1 * result;
               }
@@ -150,8 +151,7 @@ class Parser {
           return cur.value;
       } else if (cur.name == 'P') {
           return podarok();
-      }
-      else {
+      } else {
           throw std::invalid_argument("invalid argument");
       }
   }
@@ -161,7 +161,7 @@ class Parser {
 
   int parse() {
       int result = parse_sum(1);
-      if (lexer.is_valid_end()){
+      if (lexer.is_valid_end()) {
           return result;
       } else {
           throw std::invalid_argument("invalid argument");
