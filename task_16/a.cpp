@@ -7,6 +7,7 @@ struct Point {
     int x;
     int y;
 
+    Point() : x(0), y(0){};
     Point(int x, int y) : x(x), y(y){};
 };
 
@@ -18,7 +19,7 @@ class Vector {
    public:
     Vector(int x, int y) : x(x), y(y){};
     Vector(Point a) : x(a.x), y(a.y){};
-    Vector(Point a, Point b) : x(a.x - b.x), y(a.y - b.y){};
+    Vector(Point a, Point b) : x(b.x - a.x), y(b.y - a.y){};
 
     Vector operator+(const Vector& other) {
         return {this->x + other.x, this->y + other.y};
@@ -50,13 +51,10 @@ class Segment {
 };
 
 int main() {
-    int x, y;
-    cin >> x >> y;
-    Point M(x, y);
-    cin >> x >> y;
-    Point A(x, y);
-    cin >> x >> y;
-    Point B(x, y);
+    Point A, B, M;
+    cin >> M.x >> M.y;
+    cin >> A.x >> A.y;
+    cin >> B.x >> B.y;
 
     Segment AB = Segment(A, B);
 
@@ -67,4 +65,5 @@ int main() {
         cout << "NO"
              << "\n";
     }
+    return 0;
 }
